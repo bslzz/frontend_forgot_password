@@ -22,7 +22,7 @@ const App = () => {
         <Route path='/signin' element={<SignIn />} />
         <Route path='/signup' element={<SignUp />} />
         <Route path='/change_password/:token' element={<ChangePassword />} />
-        <Route path='/forgot_password/:token' element={<ForgotPassword />} />
+        <Route path='/forgot_password' element={<ForgotPassword />} />
         <Route path='*' element={<Navigate to='/' />} />
       </Routes>
     </Router>

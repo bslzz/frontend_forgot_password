@@ -1,11 +1,107 @@
-import React from 'react'
+import { FC } from 'react'
+import {
+  Grid,
+  Stack,
+  Input,
+  Button,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  Heading,
+  Box,
+  Flex,
+  Text
+} from '@chakra-ui/react'
 
-const SignIn = () => {
+import { useForm, SubmitHandler } from 'react-hook-form'
+import { IFormInput } from '../../types'
+
+const SignIn: FC = () => {
+  const AlertPop = ({ title }: string | any) => {
     return (
-        <div>
-            SignIn
-        </div>
+      <Alert status='error'>
+        <AlertIcon />
+        <AlertTitle mr={2}>{title}</AlertTitle>
+      </Alert>
     )
+  }
+
+  const {
+    handleSubmit,
+    register,
+    formState: { errors, isSubmitting }
+  } = useForm<IFormInput>()
+
+  const onSubmit: SubmitHandler<IFormInput> = (data) => {
+    console.log(data)
+  }
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Grid h='100vh' placeItems='center'>
+        <Stack p='10' boxShadow='xl' borderRadius='md' w='md'>
+          <Heading
+            textAlign='center'
+            fontSize='lg'
+            fontWeight='semibold'
+            color='cyan.500'
+          >
+            Sign In
+          </Heading>
+          <Box py='2'>
+            <Input
+              type='text'
+              placeholder='Name'
+              {...register('name', {
+                required: 'Please enter your name',
+                minLength: { value: 3, message: 'Too short' },
+                maxLength: 80
+              })}
+            />
+            {errors.name && <AlertPop title={errors.name.message} />}
+          </Box>
+          <Box py='2'>
+            <Input
+              type='email'
+              placeholder='Email'
+              {...register('email', {
+                required: 'Please enter your email',
+                minLength: { value: 3, message: 'Too short' },
+                maxLength: 100
+              })}
+            />
+            {errors.email && <AlertPop title={errors.email.message} />}
+          </Box>
+          <Box py='2'>
+            <Input
+              type='password'
+              placeholder='Password'
+              {...register('password', {
+                required: 'Please enter Password',
+                minLength: { value: 8, message: 'Too short' }
+              })}
+            />
+            {errors.password && <AlertPop title={errors.password.message} />}
+          </Box>
+
+          <Flex justify='flex-end'>
+            <Text color='blue.500'>Forgot Password</Text>
+          </Flex>
+
+          <Button
+            isLoading={isSubmitting}
+            borderRadius='md'
+            bg='cyan.600'
+            _hover={{ bg: 'cyan.200' }}
+            variant='ghost'
+            type='submit'
+          >
+            Submit
+          </Button>
+        </Stack>
+      </Grid>
+    </form>
+  )
 }
 
 export default SignIn

@@ -1,11 +1,11 @@
-
+import { Grid, Heading } from '@chakra-ui/react'
 
 const SendEmail = () => {
-    return (
-        <div>
-            Send Email
-        </div>
-    )
+  return (
+    <Grid h='100vh' placeItems='center'>
+      <Heading>Email Sent</Heading>
+    </Grid>
+  )
 }
 
 export default SendEmail
