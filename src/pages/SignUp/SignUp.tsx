@@ -12,8 +12,13 @@ import {
 } from '@chakra-ui/react'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { IFormInput } from '../../types'
+import { useSignUpUserMutation } from '../../store/api/authApi'
 
 const SignUp: FC = () => {
+  const [signUpUser, { data, isLoading }] = useSignUpUserMutation()
+
+  console.log('data', data)
+
   const AlertPop = ({ title }: string | any) => {
     return (
       <Alert status='error'>
@@ -26,11 +31,11 @@ const SignUp: FC = () => {
   const {
     handleSubmit,
     register,
-    formState: { errors, isSubmitting }
+    formState: { errors }
   } = useForm<IFormInput>()
 
   const onSubmit: SubmitHandler<IFormInput> = (data) => {
-    console.log(data)
+    signUpUser({ ...data })
   }
 
   return (
@@ -82,7 +87,7 @@ const SignUp: FC = () => {
           </Box>
 
           <Button
-            isLoading={isSubmitting}
+            isLoading={isLoading}
             borderRadius='md'
             bg='cyan.600'
             _hover={{ bg: 'cyan.200' }}
