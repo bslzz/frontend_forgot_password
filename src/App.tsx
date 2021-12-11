@@ -1,22 +1,20 @@
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate
-} from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import ChangePassword from './pages/ChangePassword/ChangePassword'
 import EmailVerify from './pages/EmailVerify/EmailVerify'
 import ForgotPassword from './pages/ForgotPassword/ForgotPassword'
 import Home from './pages/Home/Home'
+import PageNotFound from './pages/PageNotFound/PageNotFound'
 import SendEmail from './pages/SendEmail/SendEmail'
 import SignIn from './pages/SignIn/SignIn'
 import SignUp from './pages/SignUp/SignUp'
+import { useAppSelector } from './store/ts_hooks'
 
 const App = () => {
+  const { token } = useAppSelector((state) => state.auth)
   return (
     <Router>
       <Routes>
-        <Route path='/' element={<Home />} />
+        {token && <Route path='/' element={<Home />} />}
         <Route path='/verify_email' element={<SendEmail />} />
         <Route path='/verify_email/:token' element={<EmailVerify />} />
         <Route path='/signin' element={<SignIn />} />
@@ -26,7 +24,7 @@ const App = () => {
           element={<ChangePassword />}
         />
         <Route path='/forgot_password' element={<ForgotPassword />} />
-        <Route path='*' element={<Navigate to='/' />} />
+        <Route path='*' element={<PageNotFound />} />
       </Routes>
     </Router>
   )

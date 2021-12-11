@@ -17,12 +17,15 @@ import { useForm, SubmitHandler } from 'react-hook-form'
 import { useSignInUserMutation } from '../../store/api/authApi'
 import { Link, useNavigate } from 'react-router-dom'
 import { ISignInInput } from '../../types'
+import { useAppDispatch } from '../../store/ts_hooks'
+import { setUser } from '../../store/features/authSlice'
 
 const SignIn: FC = () => {
+  const dispatch = useAppDispatch()
   const [email, setEmail] = useState<string>('')
   const navigate = useNavigate()
 
-  const [signInUser, { isLoading, error, isError, isSuccess }] =
+  const [signInUser, { data, isLoading, error, isError, isSuccess }] =
     useSignInUserMutation()
 
   const AlertPop = ({ title }: string | any) => {
@@ -43,7 +46,12 @@ const SignIn: FC = () => {
   const onSubmit: SubmitHandler<ISignInInput> = async (data): Promise<void> => {
     setEmail(data.email)
     await signInUser({ ...data })
-    isSuccess && navigate('/')
+  }
+
+  if (isSuccess) {
+    dispatch(setUser({ name: data.name, token: data.token }))
+    localStorage.setItem('token', data.token)
+    navigate('/')
   }
 
   if ((error as any)?.data.message === 'User Not Verified') {
