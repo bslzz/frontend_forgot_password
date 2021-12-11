@@ -3,10 +3,11 @@ export interface IUser {
   email: string
   password: string
 }
-
-export interface IFormInput {
-  name: string
+export interface ISignInInput {
   email: string
   password: string
-  c_password?: string
+}
+export interface IChangePasswordInput {
+  password: string
+  c_password: string
 }

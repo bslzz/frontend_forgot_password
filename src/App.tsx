@@ -17,11 +17,14 @@ const App = () => {
     <Router>
       <Routes>
         <Route path='/' element={<Home />} />
-        <Route path='/send_verify_email' element={<SendEmail />} />
-        <Route path='/email_verify/:token' element={<EmailVerify />} />
+        <Route path='/verify_email' element={<SendEmail />} />
+        <Route path='/verify_email/:token' element={<EmailVerify />} />
         <Route path='/signin' element={<SignIn />} />
         <Route path='/signup' element={<SignUp />} />
-        <Route path='/change_password/:token' element={<ChangePassword />} />
+        <Route
+          path='/forgot_password_verify/:token'
+          element={<ChangePassword />}
+        />
         <Route path='/forgot_password' element={<ForgotPassword />} />
         <Route path='*' element={<Navigate to='/' />} />
       </Routes>

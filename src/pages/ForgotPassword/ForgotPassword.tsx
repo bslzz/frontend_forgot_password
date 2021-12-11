@@ -12,9 +12,13 @@ import {
 } from '@chakra-ui/react'
 
 import { useForm, SubmitHandler } from 'react-hook-form'
-import { IFormInput } from '../../types'
+import { ISignInInput } from '../../types'
+import { useForgotPasswordMutation } from '../../store/api/authApi'
 
 const ForgotPassword: FC = () => {
+  const [forgotPassword, { isLoading, error, isError }] =
+    useForgotPasswordMutation()
+
   const AlertPop = ({ title }: string | any) => {
     return (
       <Alert status='error'>
@@ -27,15 +31,16 @@ const ForgotPassword: FC = () => {
   const {
     handleSubmit,
     register,
-    formState: { errors, isSubmitting }
-  } = useForm<IFormInput>()
+    formState: { errors }
+  } = useForm<ISignInInput>()
 
-  const onSubmit: SubmitHandler<IFormInput> = (data) => {
-    console.log(data)
+  const onSubmit: SubmitHandler<ISignInInput> = async (data) => {
+    await forgotPassword({ email: data.email })
   }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
+      {isError && alert((error as any).data.message)}
       <Grid h='100vh' placeItems='center'>
         <Stack p='10' boxShadow='xl' borderRadius='md' w='md'>
           <Heading
@@ -66,7 +71,7 @@ const ForgotPassword: FC = () => {
             _hover={{ bg: 'cyan.200' }}
             variant='ghost'
             type='submit'
-            isLoading={isSubmitting}
+            isLoading={isLoading}
           >
             Send
           </Button>

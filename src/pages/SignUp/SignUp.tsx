@@ -11,13 +11,15 @@ import {
   Box
 } from '@chakra-ui/react'
 import { useForm, SubmitHandler } from 'react-hook-form'
-import { IFormInput } from '../../types'
+import { IUser } from '../../types'
 import { useSignUpUserMutation } from '../../store/api/authApi'
+import { useNavigate } from 'react-router-dom'
 
 const SignUp: FC = () => {
-  const [signUpUser, { data, isLoading }] = useSignUpUserMutation()
+  const navigate = useNavigate()
 
-  console.log('data', data)
+  const [signUpUser, { error, isLoading, isError, isSuccess }] =
+    useSignUpUserMutation()
 
   const AlertPop = ({ title }: string | any) => {
     return (
@@ -32,10 +34,11 @@ const SignUp: FC = () => {
     handleSubmit,
     register,
     formState: { errors }
-  } = useForm<IFormInput>()
+  } = useForm<IUser>()
 
-  const onSubmit: SubmitHandler<IFormInput> = (data) => {
-    signUpUser({ ...data })
+  const onSubmit: SubmitHandler<IUser> = async (data): Promise<void> => {
+    await signUpUser({ ...data })
+    isSuccess && navigate('/signin')
   }
 
   return (
@@ -50,6 +53,7 @@ const SignUp: FC = () => {
           >
             Sign Up
           </Heading>
+          {isError && <AlertPop title={(error as any).data.message} />}
           <Box py='2'>
             <Input
               type='text'

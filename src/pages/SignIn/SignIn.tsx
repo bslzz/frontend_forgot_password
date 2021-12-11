@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import {
   Grid,
   Stack,
@@ -14,9 +14,17 @@ import {
 } from '@chakra-ui/react'
 
 import { useForm, SubmitHandler } from 'react-hook-form'
-import { IFormInput } from '../../types'
+import { useSignInUserMutation } from '../../store/api/authApi'
+import { Link, useNavigate } from 'react-router-dom'
+import { ISignInInput } from '../../types'
 
 const SignIn: FC = () => {
+  const [email, setEmail] = useState<string>('')
+  const navigate = useNavigate()
+
+  const [signInUser, { isLoading, error, isError, isSuccess }] =
+    useSignInUserMutation()
+
   const AlertPop = ({ title }: string | any) => {
     return (
       <Alert status='error'>
@@ -29,11 +37,19 @@ const SignIn: FC = () => {
   const {
     handleSubmit,
     register,
-    formState: { errors, isSubmitting }
-  } = useForm<IFormInput>()
+    formState: { errors }
+  } = useForm<ISignInInput>()
 
-  const onSubmit: SubmitHandler<IFormInput> = (data) => {
-    console.log(data)
+  const onSubmit: SubmitHandler<ISignInInput> = async (data): Promise<void> => {
+    setEmail(data.email)
+    await signInUser({ ...data })
+    isSuccess && navigate('/')
+  }
+
+  if ((error as any)?.data.message === 'User Not Verified') {
+    navigate('/verify_email', {
+      state: { email }
+    })
   }
 
   return (
@@ -48,18 +64,7 @@ const SignIn: FC = () => {
           >
             Sign In
           </Heading>
-          <Box py='2'>
-            <Input
-              type='text'
-              placeholder='Name'
-              {...register('name', {
-                required: 'Please enter your name',
-                minLength: { value: 3, message: 'Too short' },
-                maxLength: 80
-              })}
-            />
-            {errors.name && <AlertPop title={errors.name.message} />}
-          </Box>
+          {isError && <AlertPop title={(error as any).data.message} />}
           <Box py='2'>
             <Input
               type='email'
@@ -85,11 +90,13 @@ const SignIn: FC = () => {
           </Box>
 
           <Flex justify='flex-end'>
-            <Text color='blue.500'>Forgot Password</Text>
+            <Text as={Link} to='/forgot_password' color='blue.500'>
+              Forgot Password
+            </Text>
           </Flex>
 
           <Button
-            isLoading={isSubmitting}
+            isLoading={isLoading}
             borderRadius='md'
             bg='cyan.600'
             _hover={{ bg: 'cyan.200' }}

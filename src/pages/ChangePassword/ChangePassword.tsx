@@ -12,9 +12,16 @@ import {
 } from '@chakra-ui/react'
 
 import { useForm, SubmitHandler } from 'react-hook-form'
-import { IFormInput } from '../../types'
+import { IChangePasswordInput } from '../../types'
+import { useChangePasswordMutation } from '../../store/api/authApi'
+import { useParams } from 'react-router-dom'
 
 const ChangePassword: FC = () => {
+  const { token } = useParams()
+
+  const [changePassword, { isLoading, isError, error }] =
+    useChangePasswordMutation()
+
   const AlertPop = ({ title }: string | any) => {
     return (
       <Alert status='error'>
@@ -27,15 +34,16 @@ const ChangePassword: FC = () => {
   const {
     handleSubmit,
     register,
-    formState: { errors, isSubmitting }
-  } = useForm<IFormInput>()
+    formState: { errors }
+  } = useForm<IChangePasswordInput>()
 
-  const onSubmit: SubmitHandler<IFormInput> = (data) => {
-    console.log(data)
+  const onSubmit: SubmitHandler<IChangePasswordInput> = async (data) => {
+    await changePassword({ password: data.password, token: token! })
   }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
+      {isError && alert((error as any).data.message)}
       <Grid h='100vh' placeItems='center'>
         <Stack p='10' boxShadow='xl' borderRadius='md' w='md'>
           <Heading
@@ -77,7 +85,7 @@ const ChangePassword: FC = () => {
             bg='cyan.600'
             _hover={{ bg: 'cyan.200' }}
             variant='ghost'
-            isLoading={isSubmitting}
+            isLoading={isLoading}
             type='submit'
           >
             Submit
